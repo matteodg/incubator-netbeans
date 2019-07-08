@@ -16,7 +16,6 @@ import org.netbeans.modules.bugtracking.gitlab.repository.GitLabRepositoryImpl;
 
 /**
  *
- * @author tomas
  */
 public class GitLabQueryImpl {
 

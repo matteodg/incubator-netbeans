@@ -25,7 +25,6 @@ import org.openide.util.NbBundle.Messages;
  * Provides the UI for your particular repository instance and handles
  * interaction with the TopComponent in which it is visualized.
  *
- * @author Matteo Di Giovinazzo
  */
 public class GitLabRepositoryController implements RepositoryController, ActionListener, DocumentListener {
 

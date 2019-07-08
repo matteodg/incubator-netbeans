@@ -11,7 +11,6 @@ import org.netbeans.modules.bugtracking.spi.IssueScheduleProvider;
 
 /**
  *
- * @author tomas
  */
 public class GitLabIssueScheduleProviderImpl implements IssueScheduleProvider<GitLabIssueImpl> {
 

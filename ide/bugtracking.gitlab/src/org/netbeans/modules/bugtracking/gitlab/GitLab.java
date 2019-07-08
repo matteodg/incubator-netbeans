@@ -26,7 +26,6 @@ import org.openide.util.ImageUtilities;
 
 /**
  *
- * @author tomas
  */
 public class GitLab {
 
@@ -42,13 +41,13 @@ public class GitLab {
     private BugtrackingSupport<GitLabRepositoryImpl, GitLabQueryImpl, GitLabIssueImpl> support;
 
     private final Map<String, GitLabRepositoryImpl> repositories = new HashMap<>();
-    private static GitLab instance;
+    private static GitLab INSTANCE;
 
     public synchronized static GitLab getInstance() {
-        if (instance == null) {
-            instance = new GitLab();
+        if (INSTANCE == null) {
+            INSTANCE = new GitLab();
         }
-        return instance;
+        return INSTANCE;
     }
 
     public BugtrackingSupport<GitLabRepositoryImpl, GitLabQueryImpl, GitLabIssueImpl> getSupport() {

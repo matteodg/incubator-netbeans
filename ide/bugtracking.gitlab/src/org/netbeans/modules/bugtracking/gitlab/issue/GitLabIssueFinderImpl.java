@@ -22,7 +22,6 @@ import org.netbeans.modules.bugtracking.spi.IssueFinder;
 
 /**
  *
- * @author Matteo Di Giovinazzo
  */
 public class GitLabIssueFinderImpl implements IssueFinder {
 

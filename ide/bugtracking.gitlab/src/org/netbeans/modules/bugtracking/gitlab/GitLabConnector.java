@@ -12,7 +12,6 @@ import org.netbeans.modules.bugtracking.gitlab.repository.GitLabRepositoryImpl;
 
 /**
  *
- * @author tomas
  */
 @BugtrackingConnector.Registration(
         id = GitLabConnector.ID,

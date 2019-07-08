@@ -13,7 +13,6 @@ import org.netbeans.modules.bugtracking.gitlab.repository.GitLabRepositoryImpl;
 /**
  * TODO delegate to your particular issue implementation
  *
- * @author tomas
  */
 public class GitLabIssueStatusProviderImpl implements IssueStatusProvider<GitLabRepositoryImpl, GitLabIssueImpl> {
 

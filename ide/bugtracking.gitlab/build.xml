@@ -19,7 +19,7 @@
     under the License.
 
 -->
-<project basedir="." default="build" name="ide/bugtracking.gitlab">
+<project name="ide/bugtracking.gitlab" default="build" basedir=".">
     <description>Builds, tests, and runs the project org.netbeans.modules.bugtracking.gitlab</description>
     <import file="../../nbbuild/templates/projectized.xml"/>
 </project>

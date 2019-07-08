@@ -15,7 +15,6 @@ import org.netbeans.modules.bugtracking.gitlab.issue.GitLabIssueImpl;
 
 /**
  *
- * @author tomas
  */
 public class GitLabQueryPanel extends javax.swing.JPanel {
 

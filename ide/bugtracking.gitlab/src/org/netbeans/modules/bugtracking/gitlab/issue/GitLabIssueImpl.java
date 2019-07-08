@@ -23,7 +23,6 @@ import org.netbeans.modules.bugtracking.gitlab.repository.GitLabRepositoryImpl;
  * TODO - represents a implementation particular issue instance. Accessed from
  * the bugtracking infrastructure via GitLabIssueProvider.
  *
- * @author tomas
  */
 public class GitLabIssueImpl {
 

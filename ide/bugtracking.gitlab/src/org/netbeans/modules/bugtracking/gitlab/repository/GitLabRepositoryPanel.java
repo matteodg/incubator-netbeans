@@ -7,7 +7,6 @@ package org.netbeans.modules.bugtracking.gitlab.repository;
 
 /**
  *
- * @author tomas
  */
 public class GitLabRepositoryPanel extends javax.swing.JPanel {
 

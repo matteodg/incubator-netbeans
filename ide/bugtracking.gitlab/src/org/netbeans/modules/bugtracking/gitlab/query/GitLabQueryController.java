@@ -24,7 +24,6 @@ import org.netbeans.modules.bugtracking.gitlab.issue.GitLabIssueImpl;
 
 /**
  *
- * @author tomas
  */
 class GitLabQueryController implements QueryController, DocumentListener, ActionListener {
 

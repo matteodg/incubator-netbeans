@@ -17,7 +17,6 @@ import org.netbeans.modules.bugtracking.gitlab.query.GitLabQueryImpl;
 /**
  * Delegates to the particular repository instance
  *
- * @author tomas
  */
 public class GitLabRepositoryProviderImpl implements RepositoryProvider<GitLabRepositoryImpl, GitLabQueryImpl, GitLabIssueImpl> {
 

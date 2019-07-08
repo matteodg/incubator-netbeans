@@ -14,7 +14,6 @@ import org.netbeans.modules.bugtracking.spi.IssueProvider;
 /**
  * TODO delegates to the particular issue instance
  *
- * @author tomas
  */
 public class GitLabIssueProviderImpl implements IssueProvider<GitLabIssueImpl> {
 

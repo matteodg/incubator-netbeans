@@ -10,7 +10,6 @@ import org.netbeans.modules.bugtracking.spi.IssuePriorityProvider;
 
 /**
  *
- * @author tomas
  */
 public class GitLabIssuePriorityProviderImpl implements IssuePriorityProvider<GitLabIssueImpl> {
 

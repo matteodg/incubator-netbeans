@@ -19,7 +19,6 @@ import org.openide.util.RequestProcessor;
  * TODO - provides the UI for your particular issue instance and handles
  * interaction with the TopComponent in which it is visualized.
  *
- * @author tomas
  */
 class GitLabIssueController implements IssueController, DocumentListener, ActionListener {
 

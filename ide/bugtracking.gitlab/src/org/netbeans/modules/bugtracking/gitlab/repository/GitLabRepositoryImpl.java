@@ -37,7 +37,6 @@ import org.openide.util.Exceptions;
  * TODO - represents a implementation particular repository instance. Accessed
  * from the bugtracking infrastructure via GitLabRepositoryProvider.
  *
- * @author tomas
  */
 public class GitLabRepositoryImpl {
 

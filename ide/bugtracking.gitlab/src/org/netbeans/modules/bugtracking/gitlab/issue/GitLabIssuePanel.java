@@ -9,7 +9,6 @@ import java.awt.Font;
 
 /**
  *
- * @author tomas
  */
 public class GitLabIssuePanel extends javax.swing.JPanel {
 
