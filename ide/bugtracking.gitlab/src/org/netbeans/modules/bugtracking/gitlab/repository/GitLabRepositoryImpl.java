@@ -8,7 +8,6 @@ package org.netbeans.modules.bugtracking.gitlab.repository;
 import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,11 +17,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.gitlab.api.AuthMethod;
-import org.gitlab.api.GitlabAPI;
-import org.gitlab.api.TokenType;
-import org.gitlab.api.models.GitlabIssue;
-import org.gitlab.api.models.GitlabLabel;
+import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.IssuesApi;
+import org.gitlab4j.api.LabelsApi;
+import org.gitlab4j.api.models.Issue;
+import org.gitlab4j.api.models.Label;
 import org.netbeans.modules.bugtracking.spi.RepositoryController;
 import org.netbeans.modules.bugtracking.spi.RepositoryInfo;
 import org.netbeans.modules.bugtracking.spi.RepositoryProvider;
@@ -44,11 +44,11 @@ public class GitLabRepositoryImpl {
     public static final String PROP_PROJECT_ID = "projectId"; // NOI18N
 
     private RepositoryInfo info;
-    private final Map<String, GitLabQueryImpl> queries = Collections.synchronizedMap(new HashMap<String, GitLabQueryImpl>());
-    private final Set<GitLabIssueImpl> newIssues = Collections.synchronizedSet(new HashSet<GitLabIssueImpl>());
+    private final Map<String, GitLabQueryImpl> queries = Collections.synchronizedMap(new HashMap<>());
+    private final Set<GitLabIssueImpl> newIssues = Collections.synchronizedSet(new HashSet<>());
 
     // GitLab simulates repository
-    private final Map<String, GitLabIssueImpl> issues = Collections.synchronizedMap(new HashMap<String, GitLabIssueImpl>());
+    private final Map<String, GitLabIssueImpl> issues = Collections.synchronizedMap(new HashMap<>());
 
     private GitLabRepositoryController controller;
 
@@ -67,24 +67,25 @@ public class GitLabRepositoryImpl {
         return GitLab.ICON;
     }
 
-    Collection<GitLabIssueImpl> getIssues(String[] ids) {
+    Collection<GitLabIssueImpl> getIssues(String[] issueIds) {
         List<GitLabIssueImpl> ret = new LinkedList<>();
 
         final String serverUrl = info.getUrl();
         final String personalAccessToken = info.getValue(PROP_PERSONAL_ACCESS_TOKEN);
         final String projectId = info.getValue(PROP_PROJECT_ID);
 
-        GitlabAPI api = GitlabAPI.connect(serverUrl, personalAccessToken, TokenType.PRIVATE_TOKEN, AuthMethod.HEADER);
-        for (String id : ids) {
+        GitLabApi api = new GitLabApi(serverUrl, personalAccessToken);
+        IssuesApi issuesApi = api.getIssuesApi();
+        for (String issueId : issueIds) {
             try {
-                GitlabIssue issue = api.getIssue(projectId, Integer.parseInt(id));
+                Issue issue = issuesApi.getIssue(projectId, Integer.parseInt(issueId));
                 if (issue != null) {
                     String title = issue.getTitle();
                     String description = issue.getDescription();
-                    String[] labels = issue.getLabels();
-                    ret.add(new GitLabIssueImpl(this, id, title, description, labels));
+                    List<String> labels = issue.getLabels();
+                    ret.add(new GitLabIssueImpl(this, issueId, title, description, labels));
                 }
-            } catch (IOException ex) {
+            } catch (GitLabApiException ex) {
                 Exceptions.printStackTrace(ex);
             }
         }
@@ -130,15 +131,20 @@ public class GitLabRepositoryImpl {
         String personalAccessToken = info.getValue(PROP_PERSONAL_ACCESS_TOKEN);
         String projectId = info.getValue(PROP_PROJECT_ID);
 
-        GitlabAPI api = GitlabAPI.connect(serverUrl, personalAccessToken, TokenType.PRIVATE_TOKEN, AuthMethod.HEADER);
-        for (GitlabIssue issue : api.getIssues(projectId)) {
-            int id = issue.getIid();
-            String title = issue.getTitle();
-            String description = issue.getDescription();
-            String[] labels = issue.getLabels();
-            ret.add(new GitLabIssueImpl(this, Integer.toString(id), title, description, labels));
+        GitLabApi api = new GitLabApi(serverUrl, personalAccessToken);
+        IssuesApi issuesApi = api.getIssuesApi();
+        try {
+            final List<Issue> issuesList = issuesApi.getIssues(projectId);
+            for (Issue issue : issuesList) {
+                int issueId = issue.getIid();
+                String title = issue.getTitle();
+                String description = issue.getDescription();
+                List<String> labels = issue.getLabels();
+                ret.add(new GitLabIssueImpl(this, Integer.toString(issueId), title, description, labels));
+            }
+        } catch (GitLabApiException ex) {
+            Exceptions.printStackTrace(ex);
         }
-
         return ret;
     }
 
@@ -215,16 +221,17 @@ public class GitLabRepositoryImpl {
         String personalAccessToken = info.getValue(PROP_PERSONAL_ACCESS_TOKEN);
         String projectId = info.getValue(PROP_PROJECT_ID);
 
-        GitlabAPI api = GitlabAPI.connect(serverUrl, personalAccessToken, TokenType.PRIVATE_TOKEN, AuthMethod.HEADER);
+        GitLabApi api = new GitLabApi(serverUrl, personalAccessToken);
+        LabelsApi labelsApi = api.getLabelsApi();
         try {
-            for (GitlabLabel label : api.getLabels(projectId)) {
+            List<Label> labels = labelsApi.getLabels(projectId);
+            for (Label label : labels) {
                 ret.put(label.getName(), label.getColor());
             }
-        } catch (IOException ex) {
+        } catch (GitLabApiException ex) {
             Exceptions.printStackTrace(ex);
         }
 
         return ret;
     }
-
 }

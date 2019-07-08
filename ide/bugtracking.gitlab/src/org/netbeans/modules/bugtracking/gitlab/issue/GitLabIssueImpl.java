@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import org.netbeans.modules.bugtracking.spi.IssueProvider;
 import org.netbeans.modules.bugtracking.spi.IssueScheduleInfo;
 import org.netbeans.modules.bugtracking.spi.IssueStatusProvider;
@@ -32,17 +33,17 @@ public class GitLabIssueImpl {
     //
     private String remoteSummary;
     private String remoteDescription;
-    private String[] remoteLabels;
+    private List<String> remoteLabels;
     //
     private String localSummary;
     private String localDescription;
-    private String[] localLabels;
+    private List<String> localLabels;
 
     private IssueScheduleInfo scheduleInfo;
     private int estimate;
     private Date dueDate;
 
-    public GitLabIssueImpl(GitLabRepositoryImpl repository, String id, String summary, String description, String[] labels) {
+    public GitLabIssueImpl(GitLabRepositoryImpl repository, String id, String summary, String description, List<String> labels) {
         this(repository, summary, description, labels);
         this.id = id;
     }
@@ -51,7 +52,7 @@ public class GitLabIssueImpl {
         this(repository, summary, description, null);
     }
 
-    public GitLabIssueImpl(GitLabRepositoryImpl repository, String summary, String description, String[] labels) {
+    public GitLabIssueImpl(GitLabRepositoryImpl repository, String summary, String description, List<String> labels) {
         this(repository);
         this.remoteSummary = summary;
         this.remoteDescription = description;
@@ -109,15 +110,15 @@ public class GitLabIssueImpl {
         this.localDescription = description;
     }
 
-    String[] getLabels() {
+    List<String> getLabels() {
         return localLabels != null ? localLabels : remoteLabels;
     }
 
-    String[] getRemoteLabels() {
+    List<String> getRemoteLabels() {
         return remoteLabels;
     }
 
-    void setLabels(String[] labels) {
+    void setLabels(List<String> labels) {
         this.localLabels = labels;
     }
 

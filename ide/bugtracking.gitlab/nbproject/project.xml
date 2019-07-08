@@ -35,6 +35,14 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.libs.gitlab4j_api</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.0</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.bugtracking</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -83,31 +91,21 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
+            <test-dependencies>
+                <test-type>
+                    <name>unit</name>
+                    <test-dependency>
+                        <code-name-base>org.netbeans.libs.junit4</code-name-base>
+                        <compile-dependency/>
+                    </test-dependency>
+                    <test-dependency>
+                        <code-name-base>org.netbeans.modules.nbjunit</code-name-base>
+                        <recursive/>
+                        <compile-dependency/>
+                    </test-dependency>
+                </test-type>
+            </test-dependencies>
             <public-packages/>
-            <class-path-extension>
-                <runtime-relative-path>ext/commons-io-2.4.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-io-2.4.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-annotations-2.5.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-annotations-2.5.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-core-2.5.3.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-core-2.5.3.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jackson-databind-2.5.3.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jackson-databind-2.5.3.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/java-gitlab-api-4.1.0.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/java-gitlab-api-4.1.0.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/slf4j-api-1.8.0-beta2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/slf4j-api-1.8.0-beta2.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>
