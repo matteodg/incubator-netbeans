@@ -5,25 +5,37 @@
  */
 package org.netbeans.modules.bugtracking.gitlab.query;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Map;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
-import org.netbeans.modules.bugtracking.gitlab.issue.GitLabIssueImpl;
+import javax.swing.plaf.basic.BasicTreeUI;
+import org.netbeans.spi.viewmodel.Models;
 
 /**
  *
  */
 public class GitLabQueryPanel extends javax.swing.JPanel {
 
+    private final ExpandablePanel issueDetailsPanel;
+    private final ExpandablePanel textPanel;
+    final JComponent resultsComponent;
+
     /**
      * Creates new form GitLabQueryPanel
      */
     public GitLabQueryPanel() {
         initComponents();
-        labelList.setCellRenderer(new ListCellRenderer<Map.Entry<String, String>>() {
+        labelsList.setCellRenderer(new ListCellRenderer<Map.Entry<String, String>>() {
             private final JLabel label = new JLabel();
 
             @Override
@@ -39,20 +51,15 @@ public class GitLabQueryPanel extends javax.swing.JPanel {
                 return label;
             }
         });
-        issueList.setCellRenderer(new ListCellRenderer() {
-            private final JLabel label = new JLabel();
 
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                if (value instanceof GitLabIssueImpl) {
-                    GitLabIssueImpl issue = (GitLabIssueImpl) value;
-                    label.setText(issue.getDisplayName());
-                } else {
-                    label.setText(value.toString());
-                }
-                return label;
-            }
-        });
+        resultsComponent = Models.createView(Models.EMPTY_MODEL);
+        this.resultsPanel.add(resultsComponent, BorderLayout.CENTER);
+
+        this.textPanel = new ExpandablePanel(findByTextLabel, findByTextPanel);
+        this.issueDetailsPanel = new ExpandablePanel(findByIssueDetailsLabel, findByIssueDetailsPanel);
+
+        this.textPanel.expand();
+        this.issueDetailsPanel.expand();
     }
 
     /**
@@ -64,22 +71,96 @@ public class GitLabQueryPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        issueIdLabel = new javax.swing.JLabel();
+        issueIdText = new javax.swing.JTextField();
+        goToIssueButton = new javax.swing.JButton();
+        searchButton = new javax.swing.JButton();
+        saveChangesButton = new javax.swing.JButton();
+        openWebQueryButton = new javax.swing.JButton();
+        findByIssueDetailsLabel = new javax.swing.JLabel();
+        findByIssueDetailsPanel = new javax.swing.JPanel();
+        labelsLabel = new javax.swing.JLabel();
+        labelsListScrollPane = new javax.swing.JScrollPane();
+        findByTextLabel = new javax.swing.JLabel();
+        findByTextPanel = new javax.swing.JPanel();
         titleLabel = new javax.swing.JLabel();
-        labelLabel = new javax.swing.JLabel();
-        issueListScroll = new javax.swing.JScrollPane();
-        labelListScroll = new javax.swing.JScrollPane();
+        titleTextField = new javax.swing.JTextField();
+        resultsLabel = new javax.swing.JLabel();
+        resultsPanel = new javax.swing.JPanel();
+
+        issueIdLabel.setLabelFor(issueIdText);
+        org.openide.awt.Mnemonics.setLocalizedText(issueIdLabel, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.issueIdLabel.text")); // NOI18N
+
+        issueIdText.setText(org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.issueIdText.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(goToIssueButton, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.goToIssueButton.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(searchButton, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.searchButton.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(saveChangesButton, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.saveChangesButton.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(openWebQueryButton, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.openWebQueryButton.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(reloadAttributesButton, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.reloadAttributesButton.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(findByIssueDetailsLabel, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.findByIssueDetailsLabel.text")); // NOI18N
+
+        labelsLabel.setLabelFor(labelsList);
+        org.openide.awt.Mnemonics.setLocalizedText(labelsLabel, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.labelsLabel.text")); // NOI18N
+
+        labelsListScrollPane.setViewportView(labelsList);
+
+        javax.swing.GroupLayout findByIssueDetailsPanelLayout = new javax.swing.GroupLayout(findByIssueDetailsPanel);
+        findByIssueDetailsPanel.setLayout(findByIssueDetailsPanelLayout);
+        findByIssueDetailsPanelLayout.setHorizontalGroup(
+            findByIssueDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(findByIssueDetailsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(findByIssueDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(labelsLabel)
+                    .addComponent(labelsListScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        findByIssueDetailsPanelLayout.setVerticalGroup(
+            findByIssueDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(findByIssueDetailsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(labelsLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(labelsListScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        org.openide.awt.Mnemonics.setLocalizedText(findByTextLabel, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.findByTextLabel.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(titleLabel, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.titleLabel.text")); // NOI18N
 
         titleTextField.setText(org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.titleTextField.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(labelLabel, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.labelLabel.text")); // NOI18N
+        javax.swing.GroupLayout findByTextPanelLayout = new javax.swing.GroupLayout(findByTextPanel);
+        findByTextPanel.setLayout(findByTextPanelLayout);
+        findByTextPanelLayout.setHorizontalGroup(
+            findByTextPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(findByTextPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(titleLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(titleTextField)
+                .addContainerGap())
+        );
+        findByTextPanelLayout.setVerticalGroup(
+            findByTextPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(findByTextPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(findByTextPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(titleLabel)
+                    .addComponent(titleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(75, Short.MAX_VALUE))
+        );
 
-        issueListScroll.setViewportView(issueList);
+        org.openide.awt.Mnemonics.setLocalizedText(resultsLabel, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.resultsLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(refreshButton, org.openide.util.NbBundle.getMessage(GitLabQueryPanel.class, "GitLabQueryPanel.refreshButton.text")); // NOI18N
-
-        labelListScroll.setViewportView(labelList);
+        resultsPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -88,18 +169,28 @@ public class GitLabQueryPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(issueListScroll, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(titleLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(titleTextField))
+                    .addComponent(resultsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(findByIssueDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(refreshButton))
+                        .addComponent(searchButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(saveChangesButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+                        .addComponent(openWebQueryButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(reloadAttributesButton))
+                    .addComponent(findByTextPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelLabel)
-                            .addComponent(labelListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(issueIdLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(issueIdText, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(goToIssueButton))
+                            .addComponent(findByIssueDetailsLabel)
+                            .addComponent(findByTextLabel)
+                            .addComponent(resultsLabel))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -108,28 +199,98 @@ public class GitLabQueryPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(titleLabel)
-                    .addComponent(titleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(issueIdLabel)
+                    .addComponent(issueIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(goToIssueButton))
+                .addGap(18, 18, 18)
+                .addComponent(findByTextLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelLabel)
+                .addComponent(findByTextPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelListScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                .addComponent(findByIssueDetailsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(refreshButton)
+                .addComponent(findByIssueDetailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(resultsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(issueListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(resultsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(reloadAttributesButton)
+                    .addComponent(openWebQueryButton)
+                    .addComponent(searchButton)
+                    .addComponent(saveChangesButton))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    final javax.swing.JList issueList = new javax.swing.JList();
-    private javax.swing.JScrollPane issueListScroll;
-    private javax.swing.JLabel labelLabel;
-    final javax.swing.JList<Map.Entry<String,String>> labelList = new javax.swing.JList<>();
-    private javax.swing.JScrollPane labelListScroll;
-    final javax.swing.JButton refreshButton = new javax.swing.JButton();
+    private javax.swing.JLabel findByIssueDetailsLabel;
+    private javax.swing.JPanel findByIssueDetailsPanel;
+    private javax.swing.JLabel findByTextLabel;
+    private javax.swing.JPanel findByTextPanel;
+    private javax.swing.JButton goToIssueButton;
+    private javax.swing.JLabel issueIdLabel;
+    private javax.swing.JTextField issueIdText;
+    private javax.swing.JLabel labelsLabel;
+    final javax.swing.JList<Map.Entry<String,String>> labelsList = new javax.swing.JList<>();
+    private javax.swing.JScrollPane labelsListScrollPane;
+    private javax.swing.JButton openWebQueryButton;
+    final javax.swing.JButton reloadAttributesButton = new javax.swing.JButton();
+    private javax.swing.JLabel resultsLabel;
+    private javax.swing.JPanel resultsPanel;
+    private javax.swing.JButton saveChangesButton;
+    private javax.swing.JButton searchButton;
     private javax.swing.JLabel titleLabel;
-    final javax.swing.JTextField titleTextField = new javax.swing.JTextField();
+    javax.swing.JTextField titleTextField;
     // End of variables declaration//GEN-END:variables
+
+    private static class ExpandablePanel {
+
+        private final JPanel panel;
+        private final JLabel label;
+        private boolean expanded = true;
+        private static final Icon EXPANDED_ICON;
+        private static final Icon COLLAPSED_ICON;
+
+        static {
+            JTree tv = new JTree();
+            BasicTreeUI tvui = (BasicTreeUI) tv.getUI();
+            EXPANDED_ICON = tvui.getExpandedIcon();
+            COLLAPSED_ICON = tvui.getCollapsedIcon();
+        }
+
+        public ExpandablePanel(JLabel label, JPanel panel) {
+            this.panel = panel;
+            this.label = label;
+            this.label.addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (ExpandablePanel.this.panel.isVisible()) {
+                        collapse();
+                    } else {
+                        expand();
+                    }
+                }
+            });
+        }
+
+        public void expand() {
+            expanded = true;
+            panel.setVisible(true);
+            label.setIcon(EXPANDED_ICON);
+        }
+
+        public void collapse() {
+            expanded = false;
+            panel.setVisible(false);
+            label.setIcon(COLLAPSED_ICON);
+        }
+
+        public void setVisible(boolean visible) {
+            label.setVisible(visible);
+            panel.setVisible(visible && expanded);
+        }
+    }
 }

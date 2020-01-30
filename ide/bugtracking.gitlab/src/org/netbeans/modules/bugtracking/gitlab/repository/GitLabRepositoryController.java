@@ -45,15 +45,15 @@ public class GitLabRepositoryController implements RepositoryController, ActionL
 
             // name and server URL
             panel.nameText.getDocument().addDocumentListener(this);
-            panel.serverUrlText.getDocument().addDocumentListener(this);
+            panel.hostUrlText.getDocument().addDocumentListener(this);
             panel.projectIdText.getDocument().addDocumentListener(this);
             // API
             panel.rest4RadioButton.addActionListener(this);
-            panel.graphqlRadioButton.addActionListener(this);
+            panel.graphQlRadioButton.addActionListener(this);
             // authentication
-            panel.oauth2RadioButton.addActionListener(this);
-            panel.personalAccessRadioButton.addActionListener(this);
-            panel.personalAccessText.getDocument().addDocumentListener(this);
+            panel.oAuth2RadioButton.addActionListener(this);
+            panel.privateRadioButton.addActionListener(this);
+            panel.authTokenText.getDocument().addDocumentListener(this);
         }
         return panel;
     }
@@ -73,8 +73,8 @@ public class GitLabRepositoryController implements RepositoryController, ActionL
         RepositoryInfo info = repository.getInfo();
         if (info != null) {
             panel.nameText.setText(info.getDisplayName());
-            panel.serverUrlText.setText(info.getUrl());
-            panel.personalAccessText.setText(info.getValue(PROP_PERSONAL_ACCESS_TOKEN));
+            panel.hostUrlText.setText(info.getUrl());
+            panel.authTokenText.setText(info.getValue(PROP_PERSONAL_ACCESS_TOKEN));
             panel.projectIdText.setText(info.getValue(PROP_PROJECT_ID));
             // TODO: read also API and authentication
         }
@@ -89,9 +89,9 @@ public class GitLabRepositoryController implements RepositoryController, ActionL
     public void applyChanges() {
         repository.setData(
                 panel.nameText.getText().trim(),
-                panel.serverUrlText.getText().trim(),
+                panel.hostUrlText.getText().trim(),
                 Integer.parseInt(panel.projectIdText.getText().trim()),
-                panel.personalAccessText.getText().trim()
+                panel.authTokenText.getText().trim()
         // TODO: store also API and authentication
         );
         GitLab.getInstance().addRepository(repository);
@@ -136,7 +136,7 @@ public class GitLabRepositoryController implements RepositoryController, ActionL
     }
 
     private String getServerUrl() {
-        return panel.serverUrlText.getText().trim();
+        return panel.hostUrlText.getText().trim();
     }
 
     private String getProjectId() {
@@ -144,7 +144,7 @@ public class GitLabRepositoryController implements RepositoryController, ActionL
     }
 
     private String getPersonalAccessToken() {
-        return panel.personalAccessText.getText().trim();
+        return panel.authTokenText.getText().trim();
     }
 
     @Messages({

@@ -5,6 +5,16 @@
  */
 package org.netbeans.modules.bugtracking.gitlab.repository;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.gitlab4j.api.Constants;
+import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Issue;
+import org.gitlab4j.api.models.Version;
+import org.openide.util.Exceptions;
+
 /**
  *
  */
@@ -16,9 +26,18 @@ public class GitLabRepositoryPanel extends javax.swing.JPanel {
     public GitLabRepositoryPanel() {
         initComponents();
 
-        // TODO: implement GraphQL and OAuth2 token
-        graphqlRadioButton.setEnabled(false);
-        oauth2RadioButton.setEnabled(false);
+        {
+            // XXX: debug
+            nameText.setText(System.getProperty("nameText.text", ""));
+            hostUrlText.setText(System.getProperty("hostUrlText.text", "https://gitlab.com/"));
+            projectIdText.setText(System.getProperty("projectIdText.text", ""));
+            authTokenText.setText(System.getProperty("authTokenText.text", ""));
+        }
+
+        // TODO
+        graphQlRadioButton.setEnabled(false);
+        accessRadioButton.setEnabled(false);
+        oAuth2RadioButton.setEnabled(false);
     }
 
     /**
@@ -29,14 +48,22 @@ public class GitLabRepositoryPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         apiBG = new javax.swing.ButtonGroup();
         authenticationBG = new javax.swing.ButtonGroup();
         nameLabel = new javax.swing.JLabel();
         serverUrlLabel = new javax.swing.JLabel();
         projectIdLabel = new javax.swing.JLabel();
-        apiLabel = new javax.swing.JLabel();
-        authenticationTokenLabel = new javax.swing.JLabel();
+        apiVersionLabel = new javax.swing.JLabel();
+        tokenTypeLabel = new javax.swing.JLabel();
+        authTokenLabel = new javax.swing.JLabel();
+        secretTokenLabel = new javax.swing.JLabel();
+        validationPanel = new javax.swing.JPanel();
+        validateButton = new javax.swing.JButton();
+        validationMessageLabel = new javax.swing.JLabel();
+        progressBar = new javax.swing.JProgressBar();
+        cancelButton = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(nameLabel, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.nameLabel.text")); // NOI18N
 
@@ -44,36 +71,77 @@ public class GitLabRepositoryPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(serverUrlLabel, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.serverUrlLabel.text")); // NOI18N
 
-        serverUrlText.setText(org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.serverUrlText.text")); // NOI18N
+        hostUrlText.setText(org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.hostUrlText.text")); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(projectIdLabel, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.projectIdLabel.text")); // NOI18N
 
         projectIdText.setText(org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.projectIdText.text")); // NOI18N
-        projectIdText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                projectIdTextActionPerformed(evt);
-            }
-        });
 
-        org.openide.awt.Mnemonics.setLocalizedText(apiLabel, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.apiLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(apiVersionLabel, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.apiVersionLabel.text")); // NOI18N
 
         apiBG.add(rest4RadioButton);
         rest4RadioButton.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(rest4RadioButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.rest4RadioButton.text")); // NOI18N
 
-        apiBG.add(graphqlRadioButton);
-        org.openide.awt.Mnemonics.setLocalizedText(graphqlRadioButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.graphqlRadioButton.text")); // NOI18N
+        apiBG.add(rest3RadioButton);
+        org.openide.awt.Mnemonics.setLocalizedText(rest3RadioButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.rest3RadioButton.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(authenticationTokenLabel, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.authenticationTokenLabel.text")); // NOI18N
+        apiBG.add(graphQlRadioButton);
+        org.openide.awt.Mnemonics.setLocalizedText(graphQlRadioButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.graphQlRadioButton.text")); // NOI18N
 
-        authenticationBG.add(oauth2RadioButton);
-        org.openide.awt.Mnemonics.setLocalizedText(oauth2RadioButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.oauth2RadioButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(tokenTypeLabel, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.tokenTypeLabel.text")); // NOI18N
 
-        authenticationBG.add(personalAccessRadioButton);
-        personalAccessRadioButton.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(personalAccessRadioButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.personalAccessRadioButton.text")); // NOI18N
+        authenticationBG.add(privateRadioButton);
+        privateRadioButton.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(privateRadioButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.privateRadioButton.text")); // NOI18N
 
-        personalAccessText.setText(org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.personalAccessText.text")); // NOI18N
+        authenticationBG.add(accessRadioButton);
+        org.openide.awt.Mnemonics.setLocalizedText(accessRadioButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.accessRadioButton.text")); // NOI18N
+
+        authenticationBG.add(oAuth2RadioButton);
+        org.openide.awt.Mnemonics.setLocalizedText(oAuth2RadioButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.oAuth2RadioButton.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(authTokenLabel, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.authTokenLabel.text")); // NOI18N
+
+        authTokenText.setText(org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.authTokenText.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(secretTokenLabel, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.secretTokenLabel.text")); // NOI18N
+
+        secretTokenText.setText(org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.secretTokenText.text")); // NOI18N
+
+        validationPanel.setLayout(new java.awt.GridBagLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(validateButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.validateButton.text")); // NOI18N
+        validateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                validateButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        validationPanel.add(validateButton, gridBagConstraints);
+
+        org.openide.awt.Mnemonics.setLocalizedText(validationMessageLabel, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.validationMessageLabel.text")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        validationPanel.add(validationMessageLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        validationPanel.add(progressBar, gridBagConstraints);
+
+        org.openide.awt.Mnemonics.setLocalizedText(cancelButton, org.openide.util.NbBundle.getMessage(GitLabRepositoryPanel.class, "GitLabRepositoryPanel.cancelButton.text")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        validationPanel.add(cancelButton, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -84,24 +152,30 @@ public class GitLabRepositoryPanel extends javax.swing.JPanel {
                     .addComponent(serverUrlLabel)
                     .addComponent(nameLabel)
                     .addComponent(projectIdLabel)
-                    .addComponent(apiLabel)
-                    .addComponent(authenticationTokenLabel))
+                    .addComponent(apiVersionLabel)
+                    .addComponent(tokenTypeLabel)
+                    .addComponent(authTokenLabel)
+                    .addComponent(secretTokenLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(secretTokenText)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(rest4RadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(graphqlRadioButton)
-                        .addContainerGap())
+                        .addComponent(rest3RadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(graphQlRadioButton))
                     .addComponent(nameText)
-                    .addComponent(serverUrlText)
-                    .addComponent(projectIdText)
+                    .addComponent(authTokenText)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(oauth2RadioButton)
+                        .addComponent(privateRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(personalAccessRadioButton)
+                        .addComponent(accessRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(personalAccessText, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE))))
+                        .addComponent(oAuth2RadioButton))
+                    .addComponent(hostUrlText)
+                    .addComponent(projectIdText)))
+            .addComponent(validationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -112,44 +186,80 @@ public class GitLabRepositoryPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(serverUrlLabel)
-                    .addComponent(serverUrlText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(hostUrlText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(projectIdLabel)
                     .addComponent(projectIdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(apiLabel)
+                    .addComponent(apiVersionLabel)
                     .addComponent(rest4RadioButton)
-                    .addComponent(graphqlRadioButton))
+                    .addComponent(graphQlRadioButton)
+                    .addComponent(rest3RadioButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tokenTypeLabel)
+                    .addComponent(oAuth2RadioButton)
+                    .addComponent(privateRadioButton)
+                    .addComponent(accessRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(authenticationTokenLabel)
-                    .addComponent(oauth2RadioButton)
-                    .addComponent(personalAccessRadioButton)
-                    .addComponent(personalAccessText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(authTokenText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(authTokenLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(secretTokenLabel)
+                    .addComponent(secretTokenText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(validationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(57, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void projectIdTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectIdTextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_projectIdTextActionPerformed
+    private void validateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validateButtonActionPerformed
+        try {
+            GitLabApi.ApiVersion apiVersion = GitLabApi.ApiVersion.V4;
+            Constants.TokenType tokenType = Constants.TokenType.PRIVATE;
+
+            Map<String, Object> clientConfigProperties = new LinkedHashMap<>();
+            GitLabApi api = new GitLabApi(apiVersion, hostUrlText.getText(), tokenType, authTokenText.getText(), secretTokenText.getText(), clientConfigProperties);
+            Version version = api.getVersion();
+            String authToken = api.getAuthToken();
+            String gitLabServerUrl = api.getGitLabServerUrl();
+            String secretToken = api.getSecretToken();
+            List<Issue> issues = api.getIssuesApi().getIssues();
+            System.out.println("");
+        } catch (GitLabApiException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }//GEN-LAST:event_validateButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    final javax.swing.JRadioButton accessRadioButton = new javax.swing.JRadioButton();
     private javax.swing.ButtonGroup apiBG;
-    private javax.swing.JLabel apiLabel;
+    private javax.swing.JLabel apiVersionLabel;
+    private javax.swing.JLabel authTokenLabel;
+    final javax.swing.JTextField authTokenText = new javax.swing.JTextField();
     private javax.swing.ButtonGroup authenticationBG;
-    private javax.swing.JLabel authenticationTokenLabel;
-    final javax.swing.JRadioButton graphqlRadioButton = new javax.swing.JRadioButton();
+    private javax.swing.JButton cancelButton;
+    final javax.swing.JRadioButton graphQlRadioButton = new javax.swing.JRadioButton();
+    final javax.swing.JTextField hostUrlText = new javax.swing.JTextField();
     private javax.swing.JLabel nameLabel;
     final javax.swing.JTextField nameText = new javax.swing.JTextField();
-    final javax.swing.JRadioButton oauth2RadioButton = new javax.swing.JRadioButton();
-    final javax.swing.JRadioButton personalAccessRadioButton = new javax.swing.JRadioButton();
-    final javax.swing.JTextField personalAccessText = new javax.swing.JTextField();
+    final javax.swing.JRadioButton oAuth2RadioButton = new javax.swing.JRadioButton();
+    final javax.swing.JRadioButton privateRadioButton = new javax.swing.JRadioButton();
+    private javax.swing.JProgressBar progressBar;
     private javax.swing.JLabel projectIdLabel;
     final javax.swing.JTextField projectIdText = new javax.swing.JTextField();
+    final javax.swing.JRadioButton rest3RadioButton = new javax.swing.JRadioButton();
     final javax.swing.JRadioButton rest4RadioButton = new javax.swing.JRadioButton();
+    private javax.swing.JLabel secretTokenLabel;
+    final javax.swing.JTextField secretTokenText = new javax.swing.JTextField();
     private javax.swing.JLabel serverUrlLabel;
-    final javax.swing.JTextField serverUrlText = new javax.swing.JTextField();
+    private javax.swing.JLabel tokenTypeLabel;
+    private javax.swing.JButton validateButton;
+    private javax.swing.JLabel validationMessageLabel;
+    private javax.swing.JPanel validationPanel;
     // End of variables declaration//GEN-END:variables
 }

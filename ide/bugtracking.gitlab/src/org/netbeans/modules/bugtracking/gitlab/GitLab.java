@@ -33,12 +33,12 @@ public class GitLab {
     public static final String ICON_PATH = "org/netbeans/modules/bugtracking/gitlab/resources/repository.png"; // NOI18N
     public static final Image ICON = ImageUtilities.loadImage(ICON_PATH, true);
 
-    private GitLabIssueScheduleProviderImpl issp;
+    private static GitLabIssueScheduleProviderImpl issp;
     private static GitLabIssueStatusProviderImpl isp;
     private static GitLabIssuePriorityProviderImpl ipp;
     private static GitLabIssueFinderImpl iff;
 
-    private BugtrackingSupport<GitLabRepositoryImpl, GitLabQueryImpl, GitLabIssueImpl> support;
+    private BugtrackingSupport<GitLabRepositoryImpl, GitLabQueryImpl, GitLabIssueImpl> bugtrackingSupport;
 
     private final Map<String, GitLabRepositoryImpl> repositories = new HashMap<>();
     private static GitLab INSTANCE;
@@ -50,14 +50,14 @@ public class GitLab {
         return INSTANCE;
     }
 
-    public BugtrackingSupport<GitLabRepositoryImpl, GitLabQueryImpl, GitLabIssueImpl> getSupport() {
-        if (support == null) {
-            support = new BugtrackingSupport<>(
+    public BugtrackingSupport<GitLabRepositoryImpl, GitLabQueryImpl, GitLabIssueImpl> getBugtrackingSupport() {
+        if (bugtrackingSupport == null) {
+            bugtrackingSupport = new BugtrackingSupport<>(
                     new GitLabRepositoryProviderImpl(),
                     new GitLabQueryProviderImpl(),
                     new GitLabIssueProviderImpl());
         }
-        return support;
+        return bugtrackingSupport;
     }
 
     GitLabIssueStatusProviderImpl getIssueStatusProvider() {

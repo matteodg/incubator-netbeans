@@ -6,13 +6,13 @@
 package org.netbeans.modules.bugtracking.gitlab.query;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.netbeans.modules.bugtracking.spi.QueryProvider;
-import org.openide.util.Exceptions;
 import org.netbeans.modules.bugtracking.gitlab.issue.GitLabIssueImpl;
 import org.netbeans.modules.bugtracking.gitlab.repository.GitLabRepositoryImpl;
+import org.netbeans.modules.bugtracking.issuetable.ColumnDescriptor;
 
 /**
  *
@@ -21,7 +21,7 @@ public class GitLabQueryImpl {
 
     private final GitLabRepositoryImpl repository;
     private String name;
-    private Set<GitLabIssueImpl> issues = new HashSet<GitLabIssueImpl>();
+    private final Set<GitLabIssueImpl> issues = new LinkedHashSet<>();
     private GitLabQueryController controller;
     private String summaryCriteria;
 
@@ -45,9 +45,17 @@ public class GitLabQueryImpl {
 
     public GitLabQueryController getController() {
         if (controller == null) {
-            controller = new GitLabQueryController(this);
+//            controller = new GitLabQueryController(this);
         }
         return controller;
+    }
+
+    public ColumnDescriptor[] getColumnDescriptors() {
+        return new ColumnDescriptor[0];
+    }
+
+    public boolean isSaved() {
+        return true;
     }
 
     public boolean canRemove() {
@@ -109,30 +117,21 @@ public class GitLabQueryImpl {
                 if (issueContainer != null) {
                     issueContainer.clear();
                 }
-                for (GitLabIssueImpl i : repoIssues) {
-                    if (i.getSummary().toLowerCase().contains(summaryCriteria.toLowerCase())) {
-                        issues.add(i);
+                for (GitLabIssueImpl issue : repoIssues) {
+                    if (issue.getSummary().toLowerCase().contains(summaryCriteria.toLowerCase())) {
+                        issues.add(issue);
                         if (issueContainer != null) {
-                            issueContainer.add(i);
+                            issueContainer.add(issue);
                         }
-                        getController().add(i);
-                        sleep(1000);
                     }
                 }
+                getController().setIssues(issues);
             }
         } finally {
             if (issueContainer != null) {
                 issueContainer.refreshingFinished();
             }
             getController().refreshingFinished();
-        }
-    }
-
-    private void sleep(long t) {
-        try {
-            Thread.sleep(t);
-        } catch (InterruptedException ex) {
-            Exceptions.printStackTrace(ex);
         }
     }
 

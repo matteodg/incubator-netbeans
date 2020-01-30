@@ -9,19 +9,23 @@ import org.netbeans.modules.bugtracking.api.Repository;
 import org.netbeans.modules.bugtracking.spi.BugtrackingConnector;
 import org.netbeans.modules.bugtracking.spi.RepositoryInfo;
 import org.netbeans.modules.bugtracking.gitlab.repository.GitLabRepositoryImpl;
+import org.openide.util.NbBundle.Messages;
 
 /**
  *
  */
 @BugtrackingConnector.Registration(
         id = GitLabConnector.ID,
-        displayName = GitLabConnector.NAME,
-        tooltip = GitLabConnector.NAME,
+        displayName = "#GitLabConnector.displayName",
+        tooltip = "#GitLabConnector.tooltip",
         iconPath = GitLab.ICON_PATH
 )
+@Messages({
+    "GitLabConnector.displayName=GitLab",
+    "GitLabConnector.tooltip=GitLab"
+})
 public class GitLabConnector implements BugtrackingConnector {
 
-    public static final String NAME = "GitLab"; // NOI18N
     public static final String ID = "org.netbeans.modules.bugtracking.gitlab.gitlabconnector"; // NOI18N
 
     private GitLabConnector() {
@@ -40,12 +44,11 @@ public class GitLabConnector implements BugtrackingConnector {
     }
 
     private Repository createRepository(GitLabRepositoryImpl repo) {
-        return GitLab.getInstance().getSupport().createRepository(
+        return GitLab.getInstance().getBugtrackingSupport().createRepository(
                 repo,
                 GitLab.getInstance().getIssueStatusProvider(),
                 GitLab.getInstance().getIssueScheduleProvider(),
                 GitLab.getInstance().getIssuePriorityProvider(),
                 GitLab.getInstance().getIssueFinder());
     }
-
 }

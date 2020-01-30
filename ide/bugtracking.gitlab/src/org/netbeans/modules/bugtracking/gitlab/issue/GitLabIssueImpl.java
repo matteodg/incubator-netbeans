@@ -141,7 +141,7 @@ public class GitLabIssueImpl {
     }
 
     public void open() {
-        GitLab.getInstance().getSupport().openIssue(repository, this);
+        GitLab.getInstance().getBugtrackingSupport().openIssue(repository, this);
     }
 
     public IssueStatusProvider.Status getStatus() {

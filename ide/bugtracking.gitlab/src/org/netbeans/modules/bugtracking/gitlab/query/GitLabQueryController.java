@@ -7,20 +7,21 @@ package org.netbeans.modules.bugtracking.gitlab.query;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
-import javax.swing.JList;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.netbeans.modules.bugtracking.spi.QueryController;
 import org.openide.util.HelpCtx;
 import org.openide.util.RequestProcessor;
 import org.netbeans.modules.bugtracking.gitlab.issue.GitLabIssueImpl;
+import org.netbeans.modules.bugtracking.gitlab.repository.GitLabRepositoryImpl;
+import org.netbeans.spi.viewmodel.Models;
 
 /**
  *
@@ -28,12 +29,16 @@ import org.netbeans.modules.bugtracking.gitlab.issue.GitLabIssueImpl;
 class GitLabQueryController implements QueryController, DocumentListener, ActionListener {
 
     private GitLabQueryPanel panel;
+    private final GitLabRepositoryImpl repository;
     private final GitLabQueryImpl query;
     private String originSummaryCriteria;
+    private ResultsModel resultsModel;
+    private DefaultListModel<Map.Entry<String, String>> labelsModel;
 
     private static final String SEARCHING_LABEL = "Searching...";
 
-    public GitLabQueryController(GitLabQueryImpl query) {
+    public GitLabQueryController(GitLabRepositoryImpl repository, GitLabQueryImpl query) {
+        this.repository = repository;
         this.query = query;
     }
 
@@ -47,26 +52,35 @@ class GitLabQueryController implements QueryController, DocumentListener, Action
         if (panel == null) {
             panel = new GitLabQueryPanel();
 
+            // set values
             originSummaryCriteria = query.getSummaryCriteria();
             panel.titleTextField.setText(originSummaryCriteria);
 
+            resultsModel = new ResultsModel(query);
+            Models.setModelsToView(panel.resultsComponent, Models.createCompoundModel(Arrays.asList(
+                    resultsModel,
+                    new ResultsModel.SummaryColumnModel(),
+                    new ResultsModel.StatusColumnModel()
+            )));
+
             panel.titleTextField.getDocument().addDocumentListener(this);
-            panel.refreshButton.addActionListener(this);
-            panel.issueList.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent evt) {
-                    JList list = (JList) evt.getSource();
-                    if (evt.getClickCount() == 2) {
-                        int index = list.locationToIndex(evt.getPoint());
-                        if (index > -1) {
-                            Object item = panel.issueList.getModel().getElementAt(index);
-                            if (item instanceof GitLabIssueImpl) {
-                                ((GitLabIssueImpl) item).open();
-                            }
-                        }
-                    }
-                }
-            });
+            panel.reloadAttributesButton.addActionListener(this);
+
+//            panel.issueList.addMouseListener(new MouseAdapter() {
+//                @Override
+//                public void mouseClicked(MouseEvent evt) {
+//                    JList list = (JList) evt.getSource();
+//                    if (evt.getClickCount() == 2) {
+//                        int index = list.locationToIndex(evt.getPoint());
+//                        if (index > -1) {
+//                            Object item = panel.issueList.getModel().getElementAt(index);
+//                            if (item instanceof GitLabIssueImpl) {
+//                                ((GitLabIssueImpl) item).open();
+//                            }
+//                        }
+//                    }
+//                }
+//            });
         }
         return panel;
     }
@@ -94,9 +108,12 @@ class GitLabQueryController implements QueryController, DocumentListener, Action
             }
             query.setName(name);
         }
+
+        // savevalues
         originSummaryCriteria = panel.titleTextField.getText();
         query.setSummaryCriteria(panel.titleTextField.getText());
         fireChanged();
+
         if (query.getIssues().isEmpty()) {
             refresh();
         }
@@ -142,7 +159,7 @@ class GitLabQueryController implements QueryController, DocumentListener, Action
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == panel.refreshButton) {
+        if (e.getSource() == panel.reloadAttributesButton) {
             refresh();
         }
     }
@@ -152,15 +169,11 @@ class GitLabQueryController implements QueryController, DocumentListener, Action
         return !originSummaryCriteria.equals(panel.titleTextField.getText());
     }
 
-    private DefaultListModel issuesModel;
-    private DefaultListModel<Map.Entry<String, String>> labelsModel;
-
     void refresh() {
-        issuesModel = new DefaultListModel();
-        panel.issueList.setModel(issuesModel);
+//        resultsModel.refresh();
 
         labelsModel = new DefaultListModel<>();
-        panel.labelList.setModel(labelsModel);
+        panel.labelsList.setModel(labelsModel);
 
         query.setSummaryCriteria(panel.titleTextField.getText().trim());
         RequestProcessor.getDefault().post(new Runnable() {
@@ -172,22 +185,18 @@ class GitLabQueryController implements QueryController, DocumentListener, Action
     }
 
     public void refreshingStarted() {
-        issuesModel.addElement(SEARCHING_LABEL);
     }
 
     public void refreshingFinished() {
-        issuesModel.removeElement(SEARCHING_LABEL);
     }
 
-    public void add(GitLabIssueImpl... issues) {
-        for (GitLabIssueImpl issue : issues) {
-            issuesModel.addElement(issue);
-        }
-    }
-
-    public void setLabels(Map<String, String> labels) {
-        for (Map.Entry<String, String> entry : labels.entrySet()) {
+    public void setLabels(Map<String, String> labelsMap) {
+        for (Map.Entry<String, String> entry : labelsMap.entrySet()) {
             labelsModel.addElement(entry);
         }
+    }
+
+    void setIssues(Set<GitLabIssueImpl> issues) {
+        resultsModel.setIssues(issues);
     }
 }
